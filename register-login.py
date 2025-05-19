@@ -1,35 +1,57 @@
-import os
+import os 
 
-if not os.path.exists("historial.txt"):
-    with open ("historial.txt", "w"):
-        pass
+caracteres_especiales = ["@","#","$","€","&"]
 
-n = int(input("Introduce numero: "))
-x = int(input("Introduc segundo numero: "))
-resultado = 0
-while True:
-    opcion = int(input("Introduce que opcion de la calculadora deseas realizar:\n1.Sumar\n2.Restar\n3.Multiplicar\n4.Dividir decimalmente\n5.Salir\n"))
+def verificacion_de_contraseña (contraseña):
+    if len(contraseña) < 8:
+        print("La contraseña NO cumple con los requisitos de longitud ")
+        return 
+    mayus = False
+    minus = False
+    numero = False
+    especial = False
     
-    if opcion == 1:
-        print(f"El resultado de la suma es: {n+x}")
-        with open ('historial.txt', 'a') as f:
-            print(f"El resultado de la suma entre {n} y {x} es: {n+x}",file=f)
-    elif opcion == 2:
-        print(f"El resultado de la resta es: {n-x}")
-        with open ('historial.txt', 'a') as f:
-            print(f"El resultado de la resta entre {n} y {x} es: {n-x}",file=f)
-    elif opcion == 3:
-        print(f"Eel resultado de la multiplicacion: {n*x}")
-        with open ('historial.txt', 'a') as f:
-            print(f"El resultado de la multiplicar entre {n} y {x} es: {n*x}",file=f)
-    elif opcion == 4:
-        print(f"El resultado de la division con decimales es de: {n/x}")
-        with open ('historial.txt', 'a') as f:
-            print(f"El resultado de la division decimal entre {n} y {x} es: {n/x}",file=f)
-    elif opcion == 5:
-        print("Hasta luego")
-        break
+    for i in contraseña:
+        if i.isupper():
+            mayus = True
+        elif i.islower():
+            minus = True
+        elif i.isnumeric():
+            numero = True            
+    for i in caracteres_especiales:
+        especial = True
+    
+    if mayus == True and minus == True and numero == True and especial == True:
+        return True
     else:
-        print("Error: 404")
-        
+        print("La contraseña NO cumple con los requisitos ")
+        return False
+
+def verificacion_de_usuario(usuario):
+    with open ('users.json', 'r') as f:
+        caracter = ":"
+        for i in f:
+            i = i.strip()
+            posicion = i.find(caracter)
+            comprobacion = i[:posicion]
+            if usuario == comprobacion:
+                print("Ese usuario ya existe prueba con otro: ")
+                return
+    return True
+    
+if not os.path.exists('users.json'):
+    with open ('users.json', 'w'):
+        pass
+usuario = input("Introduce el nombre de usuario: ")
+verificacion_de_usuario(usuario)
+while not verificacion_de_usuario(usuario):
+    usuario = input("Introduce el nombre de usuario: ")
+    
+contraseña = input("Introduce la contraseña de usuario, ten en cuenta que debe de tener 8 caracteres minimo, 1 numero, 1 mayuscula, 1 minuscula y  un caracter especial: ")
+verificacion_de_contraseña(contraseña)
+while not verificacion_de_contraseña(contraseña):
+    contraseña = input("Introduce la contraseña de usuario: ")
+    
+with open ('users.json', 'a') as f:
+    print(f"{usuario}:{contraseña}",file=f)
 
